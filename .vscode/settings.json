@@ -3,4 +3,8 @@
     "*.plx": "plexcode"
   },
   "workbench.iconTheme": "plexcode-icons"
+  "[plexcode]": {
+    "editor.fontFamily": "Sett, monospace"
+  }
 }
+
