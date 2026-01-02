@@ -1,8 +1,10 @@
 {
   "name": "plexcode-icon-theme",
   "displayName": "PlexCode Icons",
+  "publisher": "NCOM Systems",
   "description": "Adds devicon for PlexCode .plx files",
   "version": "0.0.1",
+  "icon": "../../devicons/plexcode.svg",
   "engines": { "vscode": "^1.80.0" },
   "iconThemes": [
     {
