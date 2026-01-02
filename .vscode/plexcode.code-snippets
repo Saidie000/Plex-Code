@@ -1,0 +1,7 @@
+{
+  "PlexCode Arrows": {
+    "prefix": ["\\__>", "|__>"],
+    "body": ["╰──➤"],
+    "description": "Autofill PlexCode arrow symbol"
+  }
+}
