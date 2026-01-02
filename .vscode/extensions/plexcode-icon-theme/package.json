@@ -1,0 +1,14 @@
+{
+  "name": "plexcode-icon-theme",
+  "displayName": "PlexCode Icons",
+  "description": "Adds devicon for PlexCode .plx files",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.80.0" },
+  "iconThemes": [
+    {
+      "id": "plexcode-icons",
+      "label": "PlexCode Icons",
+      "path": "./plexcode-icon-theme.json"
+    }
+  ]
+}
