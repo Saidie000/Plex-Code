@@ -1,0 +1,7 @@
+{
+  "id": "plexcode",
+  "extensions": [".plx"],
+  "aliases": ["PlexCode", "plexcode"],
+  "configuration": "./plexcode.tmLanguage.json",
+  "icon": "./devicons/plexcode.svg"
+}

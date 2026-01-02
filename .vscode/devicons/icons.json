@@ -1,0 +1,7 @@
+{
+  "#": "Sample mappings: keys are extensions or exact filenames",
+  "plx": "file-code",
+  "demo.plx": "file-code",
+  "core": "file-binary",
+  "README.md": "book"
+}
