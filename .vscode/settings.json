@@ -1,5 +1,6 @@
 {
   "files.associations": {
     "*.plx": "plexcode"
-  }
+  },
+  "workbench.iconTheme": "plexcode-icons"
 }
