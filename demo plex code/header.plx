@@ -1,11 +1,8 @@
-plex.header {
-  title: "Demo Plex Header"
-  author: "Saidie000"
-  version: "0.1"
-  description: "Header for demo plex code."
-}
+.plx 
 
-plex.intent "greet" {
-  utterance: "Hello, world!"
-  response: "Welcome to the Plex Code demo."
-}
+header~ .plx 
+╰──➤ devicon | SET~ plexcode.svg  
+
+Arg!!~ doctype typed as ".plx" 
+╰──➤ set file extention | .plx     
+    ╰──➤ set~ devicon as plexcode.svg | ALWAYS!!

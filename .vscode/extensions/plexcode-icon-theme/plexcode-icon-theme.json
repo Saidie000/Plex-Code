@@ -1,6 +1,6 @@
 {
   "iconDefinitions": {
-    "_plexcode": { "iconPath": "../../devicons/plexcode.svg" }
+    "_plexcode": { "iconPath": "plexcode.ico" }
   },
   "fileExtensions": {
     "plx": "_plexcode"
