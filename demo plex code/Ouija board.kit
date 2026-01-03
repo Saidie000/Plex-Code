@@ -1,0 +1,207 @@
+.plx
+<.plexcode version="1.0" target="NCOM-DEV">
+
+//////////////////////////////////////////////////
+// NCOM DEV OUJIA BOARD — SHELL-EXPLICIT EDITION
+// © NCOM Systems™ 2025
+// DEV ACCESS ONLY
+//////////////////////////////////////////////////
+
+//////////////////////////////////////////////////
+// 0. HERO / WARNING
+//////////////////////////////////////////////////
+
+show~ hero card
+╰──➤ text | centered~!! | m-23
+╰──➤ Color~ #ffff
+╰──➤ text-shadow~ rgba(212,212,212,0.23)
+
+||| NCOM Systems™ (c) 2025 |||
+OUJIA BOARD — DEV ACCESS ONLY!!
+Hardware interrogation, forced possession,
+direct shell execution enabled.
+
+//////////////////////////////////////////////////
+// 1. ROOT AUTHORITY
+//////////////////////////////////////////////////
+
+core~ OS                         // Root Command
+╰──➤ n~ call[token]~ DEV~!!      // Sub-command 1
+    ╰──➤ validate~ developer.mf  // Sub-command 2
+    ╰──➤ validate~ user.auth
+    ╰──➤ validate~ device.mf
+    ╰──➤ if~ FAIL → HALT~!! "ACCESS DENIED"
+
+//////////////////////////////////////////////////
+// 2. DEVICE DISCOVERY (DECLARATIVE → EXECUTION)
+//////////////////////////////////////////////////
+
+Sniff~                           // Intent
+╰──➤ device~ NCOM
+╰──➤ band~ U-band
+╰──➤ scope~ ALL
+╰──➤ return~ device.list
+
+╰──➤ ~!!                        // Device execution begins
+    ╰──➤ /// scan --uwb --all    // Raw shell / transport command
+
+//////////////////////////////////////////////////
+// 3. PAIRING & POSSESSION
+//////////////////////////////////////////////////
+
+Pair~ | Device~!!
+╰──➤ target~ (@device.list)
+╰──➤ mode~ FORCED~!!
+╰──➤ lock~ USER~!!
+╰──➤ possession~ ACTIVE~!!
+
+╰──➤ ~!! ///
+    pair --force --dev --no-consent
+
+//////////////////////////////////////////////////
+// 4. UWB TAKEOVER (DEVICE SPEAKS)
+//////////////////////////////////////////////////
+
+UWB~!! [ possession(FORCED!!) | Forced[active uwb channels]]
+
+╰──➤ ~!! ///
+    uwbctl open --all-channels --override-safety
+
+╰──➤ ~!! ///
+    uwbctl bind --link @pair --exclusive
+
+//////////////////////////////////////////////////
+// 5. DEVICE → DEVICE PAYLOAD TRANSFER
+//////////////////////////////////////////////////
+
+~!! /// 
+send[ ouija-board.plx ] 
+    --transport uwb 
+    --mode raw 
+    --target @pair
+
+~!! ///
+get[ device.id ] 
+    --rate sec 
+    --scope DEV 
+    --channel uwb
+
+//////////////////////////////////////////////////
+// 6. MANIFEST RESOLUTION (DEVICE SIDE)
+//////////////////////////////////////////////////
+
+~!! ///
+load-manifest developer.mf
+
+~!! ///
+load-manifest user.mf
+
+~!! ///
+load-manifest device.mf --unlock-firmware --disable-safety
+
+//////////////////////////////////////////////////
+// 7. UI BUILD (DECLARATIVE)
+//////////////////////////////////////////////////
+
+Build~!! UI
+╰──➤ Theme~
+    ╰──➤ base~ #0000
+    ╰──➤ shadow~ #0004
+    ╰──➤ accent~ #ffff
+
+╰──➤ Panels~
+    ╰──➤ Grid~
+        ╰──➤ Rows~ 3
+        ╰──➤ Columns~ 8
+        ╰──➤ Total~ 24
+        ╰──➤ Drag~ DEV~!!
+        ╰──➤ Resize~ LIVE
+
+//////////////////////////////////////////////////
+// 8. PANEL EXECUTION BINDINGS
+//////////////////////////////////////////////////
+
+Panel~!! ID~ "CAMERA"
+╰──➤ source~ camera.raw
+╰──➤ show~ feed
+
+╰──➤ ~!! ///
+    camctl open --raw --bypass-isp
+
+Panel~!! ID~ "LIDAR"
+╰──➤ source~ lidar.depth
+╰──➤ show~ pointcloud
+
+╰──➤ ~!! ///
+    lidarctl stream --mode pointcloud --confidence on
+
+Panel~!! ID~ "SLAM"
+╰──➤ source~ slam.world
+╰──➤ show~ mesh
+
+╰──➤ ~!! ///
+    slamctl map --live --export-enabled
+
+Panel~!! ID~ "EYE"
+╰──➤ source~ eye.tracking
+╰──➤ show~ gaze
+
+╰──➤ ~!! ///
+    eyectl track --override-consent --dev
+
+Panel~!! ID~ "IMU"
+╰──➤ source~ sensor.imu
+╰──➤ show~ xyz
+
+╰──➤ ~!! ///
+    imuctl read --rate max --drift-unfiltered
+
+//////////////////////////////////////////////////
+// 9. SIMULATION / SPOOF ENGINE
+//////////////////////////////////////////////////
+
+SimCore~!!
+╰──➤ inject~ ANY
+╰──➤ override~ firmware
+╰──➤ persist~ SESSION
+╰──➤ scope~ DEVICE | OS
+
+╰──➤ ~!! ///
+    simctl enable --all-sensors --hardware-spoof
+
+//////////////////////////////////////////////////
+// 10. DIRECT EVENT INJECTION
+//////////////////////////////////////////////////
+
+Panel~!! ID~ "EVENTS"
+╰──➤ inject~ touch | voice | gesture
+
+╰──➤ ~!! ///
+    eventctl inject --type any --source dev
+
+//////////////////////////////////////////////////
+// 11. LOGGING & TRACE
+//////////////////////////////////////////////////
+
+Panel~!! ID~ "LOGS"
+╰──➤ source~ kernel
+
+╰──➤ ~!! ///
+    logctl stream --kernel --sensors --radio
+
+//////////////////////////////////////////////////
+// 12. SHUTDOWN RITUAL
+//////////////////////////////////////////////////
+
+Exit~!!
+╰──➤ wipe~ volatile
+╰──➤ release~ possession
+╰──➤ log~ final
+╰──➤ close~ core
+
+╰──➤ ~!! ///
+    uwbctl close --all
+    devicectl release --pair
+    kernelctl flush --dev
+
+</.plexcode>
