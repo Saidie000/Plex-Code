@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="NCOM SDK" Language="1033" Version="1.0.0.0" Manufacturer="NCOM Systems" UpgradeCode="PUT-GUID-HERE">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="NCOM SDK">
+          <Component Id="PlexCodeIDE" Guid="PUT-GUID-HERE">
+            <File Id="plexcode-shell" Source="../src/plexcode-shell.js" KeyPath="yes" />
+          </Component>
+          <Component Id="mf-webview" Guid="PUT-GUID-HERE">
+            <File Id="mf-webview-html" Source="../src/webview/mf-webview.html" KeyPath="yes" />
+          </Component>
+          <Component Id="mfPreview" Guid="PUT-GUID-HERE">
+            <File Id="mfPreviewJS" Source="../src/mfPreview.js" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentRef Id="PlexCodeIDE" />
+      <ComponentRef Id="mf-webview" />
+      <ComponentRef Id="mfPreview" />
+    </Feature>
+  </Product>
+</Wix>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NCOM Audax MF Preview</title>
+<style>
+body{display:flex;margin:0;font-family:sans-serif;height:100vh;}
+#sidebar{width:200px;background:#f4f4f4;padding:10px;overflow:auto;}
+#canvas{flex:1;position:relative;background:#fff;border-left:1px solid #ccc;}
+#code{width:300px;background:#1e1e1e;color:#fff;padding:10px;overflow:auto;font-family:monospace;}
+.component{border:1px dashed #333;position:absolute;cursor:move;padding:10px;}
+.window{background:#eee;border-radius:12px;padding:10px;width:150px;height:100px;}
+.button{background:#888;border-radius:12px;padding:5px 10px;color:#fff;}
+.hero{background:#cfc;width:300px;height:120px;text-align:center;line-height:120px;}
+</style>
+</head>
+<body>
+<div id="sidebar">
+<div class="preset" data-type="window">Window (12x)</div>
+<div class="preset" data-type="button">Button (12x)</div>
+<div class="preset" data-type="hero">Hero Banner</div>
+</div>
+<div id="canvas"></div>
+<div id="code"></div>
+<script>
+const vscode = acquireVsCodeApi();
+const canvas=document.getElementById('canvas');
+const code=document.getElementById('code');
+const sidebar=document.getElementById('sidebar');
+const gridSize=10;
+
+// Drag-drop presets
+sidebar.querySelectorAll('.preset').forEach(p=>{p.draggable=true;p.addEventListener('dragstart',e=>{e.dataTransfer.setData('type',p.dataset.type);});});
+canvas.addEventListener('dragover',e=>e.preventDefault());
+canvas.addEventListener('drop',e=>{e.preventDefault();const type=e.dataTransfer.getData('type');createComponent(type,e.offsetX,e.offsetY); sendUpdate();});
+
+// Draw-hold-to-shape snapping
+let isDrawing=false,startX=0,startY=0;
+canvas.addEventListener('mousedown',e=>{if(e.button===0 && e.shiftKey){isDrawing=true;startX=e.offsetX;startY=e.offsetY;}});
+canvas.addEventListener('mousemove',e=>{if(isDrawing){let width=Math.round((e.offsetX-startX)/gridSize)*gridSize;let height=Math.round((e.offsetY-startY)/gridSize)*gridSize;if(!canvas.querySelector('.drawing')){const div=document.createElement('div');div.className='component drawing';div.style.left=startX+'px';div.style.top=startY+'px';div.style.width=width+'px';div.style.height=height+'px';div.style.background='rgba(0,0,255,0.2)';div.style.border='1px solid #00f';canvas.appendChild(div);} else {const div=canvas.querySelector('.drawing');div.style.width=width+'px';div.style.height=height+'px';}}});
+canvas.addEventListener('mouseup',e=>{if(isDrawing){isDrawing=false;const div=canvas.querySelector('.drawing');if(div){div.classList.remove('drawing');div.classList.add('window');div.innerText='Window';makeDraggable(div);updateCode();sendUpdate();}}});
+
+function createComponent(type,x,y){const comp=document.createElement('div');comp.className='component '+type;comp.style.left=x+'px';comp.style.top=y+'px';comp.innerText=type;canvas.appendChild(comp);makeDraggable(comp);updateCode(); sendUpdate();}
+function makeDraggable(el){let offsetX=0,offsetY=0;el.onmousedown=function(e){if(isDrawing)return;offsetX=e.offsetX;offsetY=e.offsetY;document.onmousemove=function(ev){el.style.left=Math.round((ev.pageX-offsetX)/gridSize)*gridSize+'px';el.style.top=Math.round((ev.pageY-offsetY)/gridSize)*gridSize+'px';updateCode(); sendUpdate();};document.onmouseup=function(){document.onmousemove=null;document.onmouseup=null;}}}
+function updateCode(){let out='';canvas.querySelectorAll('.component').forEach(c=>{out+=`Panel~!!\n╰──➤ ID~ "${c.innerText}"\n╰──➤ Feed~ LIVE\n╰──➤ Controls~\n    ╰──➤ Show~ data\n\n`;});code.innerText=out;}
+function sendUpdate(){vscode.postMessage({type:'update',content:code.innerText});}
+</script>
+</body>
+</html>

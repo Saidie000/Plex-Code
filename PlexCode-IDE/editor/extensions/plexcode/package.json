@@ -1,0 +1,33 @@
+{
+  "name": "plexcode",
+  "displayName": "PlexCode",
+  "description": "PlexCode language support for VSCode OSS",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "plexcode",
+        "aliases": ["PlexCode"],
+        "extensions": [".pc"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "plexcode",
+        "scopeName": "source.plexcode",
+        "path": "./syntaxes/plexcode.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "plexcode",
+        "path": "./snippets/plexcode.code-snippets.json"
+      }
+    ]
+  }
+}

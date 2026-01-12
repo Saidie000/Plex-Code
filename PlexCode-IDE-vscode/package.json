@@ -1,0 +1,26 @@
+{
+  "name": "ncom-plexcode-audax",
+  "displayName": "NCOM PlexCode IDE + Audax",
+  "description": "Full PlexCode IDE with Audax UI Builder, syntax, snippets, and file extension support for .plx/.mf/.TAG with live .mf preview",
+  "version": "1.0.1",
+  "publisher": "Saidie000",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Other"],
+  "icon": "images/ncom-icon.png",
+  "activationEvents":["*"],
+  "main":"src/plexcode-shell.js",
+  "contributes": {
+    "commands":[
+      {
+        "command":"plexcode.openMfPreview",
+        "title":"Open MF Live Preview"
+      }
+    ],
+    "languages":[
+      {"id":"plexcode","aliases":["PlexCode"],"extensions":[".plx",".mf",".TAG"],"configuration":"syntaxes/plexcode.tmLanguage.json"}
+    ],
+    "snippets":[
+      {"language":"plexcode","path":"snippets/plexcode.code-snippets.json"}
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PlexCode UI Designer</title>
+  <style>
+    body { display:flex; margin:0; font-family:sans-serif; height:100vh; }
+    #sidebar { width:200px; background:#f4f4f4; padding:10px; overflow:auto; }
+    #canvas { flex:1; position:relative; background:#fff; border-left:1px solid #ccc; }
+    #code { width:300px; background:#1e1e1e; color:#fff; padding:10px; overflow:auto; font-family:monospace; }
+    .component { border:1px dashed #333; position:absolute; cursor:move; padding:10px; }
+    .window { background:#eee; border-radius:12px; padding:10px; width:150px; height:100px; }
+    .button { background:#888; border-radius:12px; padding:5px 10px; color:#fff; }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <div class="preset" data-type="window">Window (12x)</div>
+    <div class="preset" data-type="button">Button (12x)</div>
+    <div class="preset" data-type="hero">Hero Banner</div>
+  </div>
+  <div id="canvas"></div>
+  <div id="code"></div>
+  <script>
+    const canvas=document.getElementById('canvas');
+    const code=document.getElementById('code');
+    const sidebar=document.getElementById('sidebar');
+
+    sidebar.querySelectorAll('.preset').forEach(p=>{
+      p.addEventListener('dragstart', e=>{
+        e.dataTransfer.setData('type', p.dataset.type);
+      });
+    });
+
+    canvas.addEventListener('dragover', e=>e.preventDefault());
+    canvas.addEventListener('drop', e=>{
+      e.preventDefault();
+      const type=e.dataTransfer.getData('type');
+      const comp=document.createElement('div');
+      comp.className='component '+type;
+      comp.style.left=e.offsetX+'px';
+      comp.style.top=e.offsetY+'px';
+      comp.innerText=type;
+      canvas.appendChild(comp);
+      updateCode();
+      makeDraggable(comp);
+    });
+
+    function makeDraggable(el){
+      let offsetX=0, offsetY=0;
+      el.onmousedown=function(e){
+        offsetX=e.offsetX; offsetY=e.offsetY;
+        document.onmousemove=function(ev){
+          el.style.left=ev.pageX-offsetX+'px';
+          el.style.top=ev.pageY-offsetY+'px';
+          updateCode();
+        }
+        document.onmouseup=function(){ document.onmousemove=null; document.onmouseup=null; }
+      }
+    }
+
+    function updateCode(){
+      let out='';
+      canvas.querySelectorAll('.component').forEach(c=>{
+        out+=`Panel~!!\n╰──➤ ID~ "${c.innerText}"\n╰──➤ Feed~ LIVE\n╰──➤ Controls~\n    ╰──➤ Show~ data\n\n`;
+      });
+      code.innerText=out;
+    }
+  </script>
+</body>
+</html>

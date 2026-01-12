@@ -1,0 +1,10 @@
+{
+  "scopeName": "source.plexcode",
+  "name": "PlexCode",
+  "patterns": [
+    { "name": "keyword.control.plexcode",
+      "match": "\\b(call~|call~!!|build~|build~!!|check~|store~|\\.mf~|Argu~!!|Argur~!!|Build~!!|Panel~!!|SimCore~!!|TAG~|Signiture~!!)\\b" },
+    { "name": "string.quoted.double.plexcode", "begin": "\"", "end": "\"" },
+    { "name": "comment.line.plexcode", "match": "//.*$" }
+  ]
+}

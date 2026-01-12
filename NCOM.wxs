@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+<Product
+    Id="*"
+    Name="NCOM OS"
+    Language="1033"
+    Version="1.0.0"
+    Manufacturer="NCOM Systems"
+    UpgradeCode="12345678-ABCD-4321-DCBA-87654321AAAA">
+
+<Package
+    InstallerVersion="500"
+    Compressed="yes"
+    InstallScope="perMachine" />
+
+<MediaTemplate />
+
+<Directory Id="TARGETDIR" Name="SourceDir">
+    <Directory Id="ProgramFilesFolder">
+        <Directory Id="NCOMDIR" Name="NCOM">
+            <Directory Id="INSTALLDIR" Name="OS"/>
+        </Directory>
+    </Directory>
+</Directory>
+
+<ComponentGroup Id="NCOMFiles" Directory="INSTALLDIR">
+
+<Component Id="NCOMexe" Guid="*">
+    <File Source="..\app\NCOM.exe"/>
+</Component>
+
+<Component Id="NCOMyml" Guid="*">
+    <File Source="..\app\NCOM.yml"/>
+</Component>
+
+<Component Id="Modules" Guid="*">
+    <File Source="..\app\modules\" />
+</Component>
+
+</ComponentGroup>
+
+<Feature Id="MainFeature" Title="NCOM OS" Level="1">
+    <ComponentGroupRef Id="NCOMFiles"/>
+</Feature>
+
+</Product>
+</Wix>

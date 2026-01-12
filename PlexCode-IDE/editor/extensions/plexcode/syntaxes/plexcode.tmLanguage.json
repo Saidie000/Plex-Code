@@ -1,0 +1,19 @@
+{
+  "scopeName": "source.plexcode",
+  "name": "PlexCode",
+  "patterns": [
+    {
+      "name": "keyword.control.plexcode",
+      "match": "\\b(if|else|for|while|inject|grab|ask)\\b"
+    },
+    {
+      "name": "constant.numeric.plexcode",
+      "match": "\\b\\d+\\b"
+    },
+    {
+      "name": "string.quoted.double.plexcode",
+      "begin": "\"",
+      "end": "\""
+    }
+  ]
+}

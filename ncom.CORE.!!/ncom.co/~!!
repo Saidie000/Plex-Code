@@ -1,0 +1,17 @@
+Import~ Bundle | link~ ncom.CORE.!! 
+@CORE.attributes~ FAT | CALL [bundle] 
+╰──➤ ~!! ALWAYS call~ [ncom.core.manifesto.!!] (ncom.co/dev/"")
+    ╰──➤ []
+
+buid~ k!t-file.mf | ALL 
+.mf | ~!! /// show tree [list: ALL]~bundle
+.mf | ~!! /// Build~ bundle @NCOM.core
+
+bind~ .k!t || attributes by~ bundle 
+╰──➤ .k!t | [""]
+Import | [""].k!t 
+Store~ / bind~ [""].k!t 
+╰──➤ Store~ certificates.TAG 
+
+TAG~ SET | ID~ signitures to [ID.USER]
+

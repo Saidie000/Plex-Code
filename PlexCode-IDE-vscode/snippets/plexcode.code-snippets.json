@@ -1,0 +1,6 @@
+{
+  "Check Command": { "prefix":"check","body":["Check | $1"], "description":"Replace check~ with Check |" },
+  "Store Command": { "prefix":"store","body":["Store | $1"], "description":"Replace store~ as sub-command" },
+  "Build UI": { "prefix":"buildui","body":["Build~!! UI","╰──➤ UI~ |"],"description":"Build UI grid"},
+  "Panel Definition": { "prefix":"panel","body":["Panel~!!","╰──➤ ID~ \"$1\"","╰──➤ Feed~ LIVE","╰──➤ Source~ sensor.$2","╰──➤ Controls~","    ╰──➤ Show~ data","╰──➤ Permissions~ DEV~!!","╰──➤ Log~ ALWAYS"],"description":"Define panel"}
+}

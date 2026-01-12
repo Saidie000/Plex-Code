@@ -1,0 +1,12 @@
+{
+  "Print Statement": {
+    "prefix": "print",
+    "body": ["echo \"$1\""],
+    "description": "Print a message"
+  },
+  "ASK Command": {
+    "prefix": "ask",
+    "body": ["ASK | $1"],
+    "description": "Ask a command in PlexCode"
+  }
+}
