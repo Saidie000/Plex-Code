@@ -1,5 +1,7 @@
 const vscode = require('vscode');
 const path = require('path');
+const fs = require('fs');
+
 function activate(context){
   context.subscriptions.push(vscode.commands.registerCommand('plexcode.openMfPreview', function(uri){
     const panel = vscode.window.createWebviewPanel(

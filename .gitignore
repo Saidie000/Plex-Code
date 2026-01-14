@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+out/
+dist/
+build/
+coverage/
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode-test/
+
+# Misc
+*.log
+.env
