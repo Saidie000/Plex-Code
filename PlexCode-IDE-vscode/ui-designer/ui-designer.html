@@ -1,45 +1,717 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>NCOM Audax UI Designer</title>
-<style>
-body { display:flex; margin:0; font-family:sans-serif; height:100vh; }
-#sidebar{width:200px;background:#f4f4f4;padding:10px;overflow:auto;}
-#canvas{flex:1;position:relative;background:#fff;border-left:1px solid #ccc;}
-#code{width:300px;background:#1e1e1e;color:#fff;padding:10px;overflow:auto;font-family:monospace;}
-.component{border:1px dashed #333;position:absolute;cursor:move;padding:10px;}
-.window{background:#eee;border-radius:12px;padding:10px;width:150px;height:100px;}
-.button{background:#888;border-radius:12px;padding:5px 10px;color:#fff;}
-.hero{background:#cfc;width:300px;height:120px;text-align:center;line-height:120px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>NCOM Audax UI Designer</title>
+  <style>
+    :root {
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+
+      --accent-primary: #007AFF;
+      --accent-secondary: #34C759;
+      --accent-danger: #FF3B30;
+
+      --accent-primary-foreground: #007AFF;
+
+      --bg-primary: #F5F5F7;
+      --bg-secondary: #FFFFFF;
+      --bg-gradient-end: #E8E8ED;
+      --text-primary: rgba(0, 0, 0, 0.9);
+      --text-secondary: rgba(0, 0, 0, 0.62);
+
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.16);
+
+      --glass-primary-bg: rgba(255, 255, 255, 0.74);
+      --glass-primary-border: rgba(255, 255, 255, 0.82);
+      --glass-secondary-bg: rgba(255, 255, 255, 0.58);
+      --glass-secondary-border: rgba(255, 255, 255, 0.7);
+      --glass-tertiary-bg: rgba(255, 255, 255, 0.48);
+      --glass-tertiary-border: rgba(255, 255, 255, 0.6);
+      --glass-accent-bg: rgba(0, 122, 255, 0.16);
+      --glass-accent-border: rgba(0, 122, 255, 0.32);
+
+      --surface-blur-lg: blur(20px) saturate(180%);
+      --surface-blur-md: blur(15px) saturate(150%);
+      --surface-blur-sm: blur(10px) saturate(140%);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1A1A1F;
+        --bg-secondary: #2B2B35;
+        --bg-gradient-end: #2B2B35;
+        --accent-primary-foreground: #5AC8FF;
+        --text-primary: rgba(255, 255, 255, 0.92);
+        --text-secondary: rgba(255, 255, 255, 0.74);
+
+        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.32);
+        --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.36);
+        --shadow-lg: 0 18px 46px rgba(0, 0, 0, 0.42);
+
+        --glass-primary-bg: rgba(20, 20, 30, 0.78);
+        --glass-primary-border: rgba(255, 255, 255, 0.14);
+        --glass-secondary-bg: rgba(20, 20, 30, 0.62);
+        --glass-secondary-border: rgba(255, 255, 255, 0.12);
+        --glass-tertiary-bg: rgba(20, 20, 30, 0.5);
+        --glass-tertiary-border: rgba(255, 255, 255, 0.1);
+        --glass-accent-bg: rgba(90, 200, 255, 0.18);
+        --glass-accent-border: rgba(90, 200, 255, 0.34);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color: var(--text-primary);
+    }
+
+    body {
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(0, 122, 255, 0.25), transparent 55%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(52, 199, 89, 0.18), transparent 60%),
+                  linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-gradient-end) 100%);
+      overflow: hidden;
+    }
+
+    .glass-primary,
+    .glass-secondary,
+    .glass-tertiary,
+    .glass-accent {
+      -webkit-backdrop-filter: var(--surface-blur-lg);
+      backdrop-filter: var(--surface-blur-lg);
+      border: 1px solid var(--glass-primary-border);
+      box-shadow: var(--shadow-md);
+    }
+
+    .glass-primary {
+      background: var(--glass-primary-bg);
+      border-color: var(--glass-primary-border);
+      border-radius: var(--radius-xl);
+    }
+
+    .glass-secondary {
+      background: var(--glass-secondary-bg);
+      border-color: var(--glass-secondary-border);
+      border-radius: var(--radius-lg);
+      -webkit-backdrop-filter: var(--surface-blur-md);
+      backdrop-filter: var(--surface-blur-md);
+    }
+
+    .glass-tertiary {
+      background: var(--glass-tertiary-bg);
+      border-color: var(--glass-tertiary-border);
+      border-radius: var(--radius-md);
+      -webkit-backdrop-filter: var(--surface-blur-sm);
+      backdrop-filter: var(--surface-blur-sm);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .glass-accent {
+      background: var(--glass-accent-bg);
+      border-color: var(--glass-accent-border);
+      border-radius: var(--radius-lg);
+      -webkit-backdrop-filter: var(--surface-blur-lg);
+      backdrop-filter: var(--surface-blur-lg);
+    }
+
+    @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+      .glass-primary { background: rgba(255, 255, 255, 0.92); }
+      .glass-secondary { background: rgba(255, 255, 255, 0.86); }
+      .glass-tertiary { background: rgba(255, 255, 255, 0.78); }
+      .glass-accent { background: rgba(0, 122, 255, 0.12); }
+
+      @media (prefers-color-scheme: dark) {
+        .glass-primary { background: rgba(43, 43, 53, 0.92); }
+        .glass-secondary { background: rgba(43, 43, 53, 0.86); }
+        .glass-tertiary { background: rgba(43, 43, 53, 0.78); }
+        .glass-accent { background: rgba(90, 200, 255, 0.14); }
+      }
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 12px;
+      gap: 12px;
+    }
+
+    .titlebar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-radius: var(--radius-lg);
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .titlebar-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.95), rgba(90, 200, 255, 0.72));
+      box-shadow: 0 10px 25px rgba(0, 122, 255, 0.28);
+      flex: none;
+    }
+
+    .titlebar-title {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .titlebar-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .titlebar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      color: var(--text-primary);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn.primary {
+      background: rgba(0, 122, 255, 0.2);
+      border-color: rgba(0, 122, 255, 0.42);
+      color: var(--accent-primary-foreground);
+    }
+
+    .btn.primary:hover {
+      background: rgba(0, 122, 255, 0.28);
+      border-color: rgba(0, 122, 255, 0.62);
+      box-shadow: 0 14px 30px rgba(0, 122, 255, 0.18);
+    }
+
+    .btn.secondary {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: var(--text-primary);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .btn.secondary:hover { background: rgba(0, 0, 0, 0.1); }
+
+    @media (prefers-color-scheme: dark) {
+      .btn.secondary:hover { background: rgba(255, 255, 255, 0.12); }
+    }
+
+    .main-layout {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 260px 1fr 360px;
+      gap: 12px;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 14px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 2px 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .panel-header { border-bottom-color: rgba(255, 255, 255, 0.12); }
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+
+    .panel-caption {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .preset {
+      padding: 10px 12px;
+      border-radius: var(--radius-lg);
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .preset:active { cursor: grabbing; }
+
+    .preset:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .preset .badge {
+      font-size: 11px;
+      font-weight: 650;
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 2px 8px;
+      background: rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      flex: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .preset .badge {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .canvas {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.38)),
+        radial-gradient(900px 500px at 20% 20%, rgba(0, 122, 255, 0.18), transparent 60%),
+        radial-gradient(700px 420px at 85% 30%, rgba(52, 199, 89, 0.14), transparent 60%);
+      border: 1px solid rgba(255, 255, 255, 0.68);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .canvas {
+        background:
+          linear-gradient(rgba(20, 20, 30, 0.65), rgba(20, 20, 30, 0.45)),
+          radial-gradient(900px 500px at 20% 20%, rgba(90, 200, 255, 0.14), transparent 60%),
+          radial-gradient(700px 420px at 85% 30%, rgba(52, 199, 89, 0.12), transparent 60%);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 10px 10px;
+      pointer-events: none;
+      opacity: 0.18;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .canvas::before {
+        background:
+          linear-gradient(to right, rgba(255,255,255,0.12) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px);
+        opacity: 0.12;
+      }
+    }
+
+    .code-output {
+      flex: 1;
+      min-height: 0;
+      border-radius: var(--radius-xl);
+      padding: 14px;
+      margin: 0;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .code-output {
+        background: rgba(0, 0, 0, 0.34);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .component {
+      position: absolute;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      cursor: grab;
+      user-select: none;
+      border: 1px solid var(--glass-tertiary-border);
+      background: var(--glass-tertiary-bg);
+      -webkit-backdrop-filter: var(--surface-blur-sm);
+      backdrop-filter: var(--surface-blur-sm);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      color: var(--text-primary);
+      opacity: 1;
+    }
+
+    .component.enter {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+
+    .component:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .component:active { cursor: grabbing; }
+
+    .component.window {
+      width: 190px;
+      height: 130px;
+      border-radius: var(--radius-xl);
+      padding: 14px;
+      background: var(--glass-primary-bg);
+      border-color: var(--glass-primary-border);
+      -webkit-backdrop-filter: var(--surface-blur-lg);
+      backdrop-filter: var(--surface-blur-lg);
+    }
+
+    .component.button {
+      border-radius: 20px;
+      padding: 8px 14px;
+      background: rgba(0, 122, 255, 0.2);
+      border-color: rgba(0, 122, 255, 0.35);
+      color: var(--accent-primary-foreground);
+    }
+
+    .component.hero {
+      width: 360px;
+      height: 150px;
+      border-radius: var(--radius-xl);
+      display: grid;
+      place-items: center;
+      font-weight: 650;
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.18), rgba(52, 199, 89, 0.14));
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .drawing {
+      background: rgba(0, 122, 255, 0.18) !important;
+      border-color: rgba(0, 122, 255, 0.6) !important;
+      box-shadow: 0 18px 40px rgba(0, 122, 255, 0.18) !important;
+    }
+  </style>
 </head>
 <body>
-<div id="sidebar">
-<div class="preset" data-type="window">Window (12x)</div>
-<div class="preset" data-type="button">Button (12x)</div>
-<div class="preset" data-type="hero">Hero Banner</div>
-</div>
-<div id="canvas"></div>
-<div id="code"></div>
-<script>
-const canvas=document.getElementById('canvas');
-const code=document.getElementById('code');
-const sidebar=document.getElementById('sidebar');
-const gridSize=10;
+  <div class="app-container">
+    <header class="titlebar glass-secondary">
+      <div class="titlebar-left">
+        <div class="titlebar-mark" aria-hidden="true"></div>
+        <div style="min-width:0;">
+          <div class="titlebar-title">Audax • Liquid Glass UI Designer</div>
+          <div class="titlebar-subtitle">Drag components into the canvas • Hold <strong>Shift</strong> + drag to draw windows</div>
+        </div>
+      </div>
+      <div class="titlebar-right">
+        <button class="btn secondary" id="btnClear" type="button">Clear</button>
+        <button class="btn primary" id="btnCopy" type="button">Copy Code</button>
+      </div>
+    </header>
 
-sidebar.querySelectorAll('.preset').forEach(p=>{p.draggable=true;p.addEventListener('dragstart',e=>{e.dataTransfer.setData('type',p.dataset.type);});});
-canvas.addEventListener('dragover',e=>e.preventDefault());
-canvas.addEventListener('drop',e=>{e.preventDefault();const type=e.dataTransfer.getData('type');createComponent(type,e.offsetX,e.offsetY);});
+    <div class="main-layout">
+      <aside class="panel glass-primary" aria-label="Component presets">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Presets</div>
+            <div class="panel-caption">Drag to place</div>
+          </div>
+        </div>
+        <div class="preset-list" id="presetList">
+          <div class="preset glass-tertiary" data-type="window" draggable="true">
+            <div>Window</div>
+            <div class="badge">24px</div>
+          </div>
+          <div class="preset glass-accent" data-type="button" draggable="true">
+            <div>Button</div>
+            <div class="badge">Blue</div>
+          </div>
+          <div class="preset glass-tertiary" data-type="hero" draggable="true">
+            <div>Hero Banner</div>
+            <div class="badge">Wide</div>
+          </div>
+        </div>
+      </aside>
 
-// Draw hold-to-shape snapping
-let isDrawing=false,startX=0,startY=0;
-canvas.addEventListener('mousedown',e=>{if(e.button===0 && e.shiftKey){isDrawing=true;startX=e.offsetX;startY=e.offsetY;}});
-canvas.addEventListener('mousemove',e=>{if(isDrawing){let width=Math.round((e.offsetX-startX)/gridSize)*gridSize;let height=Math.round((e.offsetY-startY)/gridSize)*gridSize;if(!canvas.querySelector('.drawing')){const div=document.createElement('div');div.className='component drawing';div.style.left=startX+'px';div.style.top=startY+'px';div.style.width=width+'px';div.style.height=height+'px';div.style.background='rgba(0,0,255,0.2)';div.style.border='1px solid #00f';canvas.appendChild(div);} else {const div=canvas.querySelector('.drawing');div.style.width=width+'px';div.style.height=height+'px';}}});
-canvas.addEventListener('mouseup',e=>{if(isDrawing){isDrawing=false;const div=canvas.querySelector('.drawing');if(div){div.classList.remove('drawing');div.classList.add('window');div.innerText='Window';makeDraggable(div);updateCode();}}});
+      <main class="panel glass-primary" aria-label="Canvas">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Canvas</div>
+            <div class="panel-caption">Snap grid: 10px</div>
+          </div>
+        </div>
+        <div id="canvas" class="canvas" aria-label="Drag and drop canvas"></div>
+      </main>
 
-function createComponent(type,x,y){const comp=document.createElement('div');comp.className='component '+type;comp.style.left=x+'px';comp.style.top=y+'px';comp.innerText=type;canvas.appendChild(comp);makeDraggable(comp);updateCode();}
-function makeDraggable(el){let offsetX=0,offsetY=0;el.onmousedown=function(e){if(isDrawing)return;offsetX=e.offsetX;offsetY=e.offsetY;document.onmousemove=function(ev){el.style.left=Math.round((ev.pageX-offsetX)/gridSize)*gridSize+'px';el.style.top=Math.round((ev.pageY-offsetY)/gridSize)*gridSize+'px';updateCode();};document.onmouseup=function(){document.onmousemove=null;document.onmouseup=null;}}}
-function updateCode(){let out='';canvas.querySelectorAll('.component').forEach(c=>{out+=`Panel~!!\n╰──➤ ID~ "${c.innerText}"\n╰──➤ Feed~ LIVE\n╰──➤ Controls~\n    ╰──➤ Show~ data\n\n`;});code.innerText=out;}
-</script>
+      <aside class="panel glass-primary" aria-label="Generated code">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Generated</div>
+            <div class="panel-caption">Auto-updates on move</div>
+          </div>
+        </div>
+        <pre id="code" class="code-output"></pre>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const code = document.getElementById('code');
+    const presetList = document.getElementById('presetList');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnClear = document.getElementById('btnClear');
+
+    const gridSize = 10;
+    let isDrawing = false;
+    let startX = 0;
+    let startY = 0;
+    let nextId = 1;
+    let selected = null;
+
+    presetList.querySelectorAll('.preset').forEach((p) => {
+      p.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('type', p.dataset.type);
+      });
+    });
+
+    canvas.addEventListener('dragover', (e) => e.preventDefault());
+    canvas.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const type = e.dataTransfer.getData('type');
+      createComponent(type, e.offsetX, e.offsetY);
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      if (e.shiftKey) {
+        isDrawing = true;
+        startX = e.offsetX;
+        startY = e.offsetY;
+        return;
+      }
+
+      if (e.target === canvas) {
+        setSelected(null);
+      }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      const width = Math.round((e.offsetX - startX) / gridSize) * gridSize;
+      const height = Math.round((e.offsetY - startY) / gridSize) * gridSize;
+
+      let div = canvas.querySelector('.drawing');
+      if (!div) {
+        div = document.createElement('div');
+        div.className = 'component drawing';
+        div.style.left = startX + 'px';
+        div.style.top = startY + 'px';
+        canvas.appendChild(div);
+      }
+      div.style.width = width + 'px';
+      div.style.height = height + 'px';
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      if (!isDrawing) return;
+      isDrawing = false;
+      const div = canvas.querySelector('.drawing');
+      if (!div) return;
+
+      div.classList.remove('drawing');
+      div.classList.add('window');
+      div.dataset.type = 'window';
+      div.dataset.id = `window-${nextId++}`;
+      div.textContent = 'Window';
+      div.classList.add('enter');
+      makeDraggable(div);
+      makeSelectable(div);
+      requestAnimationFrame(() => div.classList.remove('enter'));
+      updateCode();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selected && selected.parentElement === canvas) {
+          selected.remove();
+          setSelected(null);
+          updateCode();
+        }
+      }
+    });
+
+    btnCopy.addEventListener('click', async () => {
+      const text = code.textContent || '';
+      try {
+        await navigator.clipboard.writeText(text);
+        btnCopy.textContent = 'Copied';
+        setTimeout(() => (btnCopy.textContent = 'Copy Code'), 900);
+      } catch {
+        // no-op
+      }
+    });
+
+    btnClear.addEventListener('click', () => {
+      canvas.querySelectorAll('.component').forEach((c) => c.remove());
+      setSelected(null);
+      updateCode();
+    });
+
+    function createComponent(type, x, y) {
+      const comp = document.createElement('div');
+      comp.className = 'component ' + type;
+      comp.style.left = x + 'px';
+      comp.style.top = y + 'px';
+
+      comp.dataset.type = type;
+      comp.dataset.id = `${type}-${nextId++}`;
+      comp.textContent = type === 'hero' ? 'Hero Banner' : type.charAt(0).toUpperCase() + type.slice(1);
+      comp.classList.add('enter');
+
+      canvas.appendChild(comp);
+      makeDraggable(comp);
+      makeSelectable(comp);
+      requestAnimationFrame(() => comp.classList.remove('enter'));
+      updateCode();
+    }
+
+    function makeSelectable(el) {
+      el.addEventListener('mousedown', (e) => {
+        if (isDrawing) return;
+        e.stopPropagation();
+        setSelected(el);
+      });
+
+      el.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const current = el.dataset.id || el.textContent;
+        const next = prompt('Component ID', current);
+        if (!next) return;
+        el.dataset.id = next;
+        updateCode();
+      });
+    }
+
+    function setSelected(el) {
+      if (selected) {
+        selected.style.outline = '';
+        selected.style.outlineOffset = '';
+      }
+      selected = el;
+      if (selected) {
+        selected.style.outline = '2px solid rgba(0, 122, 255, 0.55)';
+        selected.style.outlineOffset = '2px';
+      }
+    }
+
+    function makeDraggable(el) {
+      let offsetX = 0;
+      let offsetY = 0;
+
+      el.onmousedown = function (e) {
+        if (isDrawing) return;
+        if (e.button !== 0) return;
+
+        const canvasRect = canvas.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+
+        offsetX = e.clientX - elRect.left;
+        offsetY = e.clientY - elRect.top;
+
+        document.onmousemove = function (ev) {
+          const nextLeft = Math.round((ev.clientX - canvasRect.left - offsetX) / gridSize) * gridSize;
+          const nextTop = Math.round((ev.clientY - canvasRect.top - offsetY) / gridSize) * gridSize;
+          el.style.left = nextLeft + 'px';
+          el.style.top = nextTop + 'px';
+          updateCode();
+        };
+
+        document.onmouseup = function () {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+    }
+
+    function updateCode() {
+      let out = '';
+      canvas.querySelectorAll('.component').forEach((c) => {
+        const id = c.dataset.id || c.textContent || 'component';
+        out += `Panel~!!\n╰──➤ ID~ "${id}"\n╰──➤ Feed~ LIVE\n╰──➤ Controls~\n    ╰──➤ Show~ data\n\n`;
+      });
+      code.textContent = out;
+    }
+
+    updateCode();
+  </script>
 </body>
 </html>
