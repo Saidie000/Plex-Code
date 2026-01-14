@@ -288,7 +288,8 @@ export class Parser {
     const commands = [
       TokenType.CALL, TokenType.CALL_BANG,
       TokenType.BUILD, TokenType.BUILD_BANG,
-      TokenType.CHECK, TokenType.STORE, TokenType.STORE_CAP,
+      TokenType.CHECK, TokenType.IMPORT, TokenType.IMPORT_BANG,
+      TokenType.STORE, TokenType.STORE_CAP,
       TokenType.MANIFEST, TokenType.SHOW, TokenType.SHOW_CAP,
       TokenType.PANEL, TokenType.PANEL_BANG,
       TokenType.SIMCORE, TokenType.TAG, TokenType.SIGNATURE,

@@ -58,6 +58,15 @@ export {
   resolveIntent,
 } from './resolver/resolver.js';
 
+export {
+  PackageManager,
+  Package,
+  PackageRegistry,
+  InstallationProgress,
+  KNOWN_PACKAGES,
+  globalPackageManager,
+} from './resolver/package-manager.js';
+
 import { tokenize } from './lexer/tokenizer.js';
 import { parse } from './parser/parser.js';
 import { createResolver } from './resolver/resolver.js';

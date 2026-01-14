@@ -1,4 +1,6 @@
-export type IntentCategory = 'QUERY' | 'CONTROL' | 'UI' | 'STATE' | 'AUTH' | 'DEVICE' | 'EXEC';
+import { globalPackageManager } from './package-manager.js';
+
+export type IntentCategory = 'QUERY' | 'CONTROL' | 'UI' | 'STATE' | 'AUTH' | 'DEVICE' | 'EXEC' | 'PACKAGE';
 
 export type Backend = 'html' | 'python' | 'shell' | 'ncom';
 
@@ -104,6 +106,21 @@ export const BUILTIN_INTENTS: Record<string, Intent> = {
     },
     description: 'Store data or state reference',
     examples: ['Store~ @.attributes', 'Store~ @pair']
+  },
+
+  'package.import': {
+    name: 'package.import',
+    command: 'import~',
+    category: 'PACKAGE',
+    requiredParams: ['package'],
+    optionalParams: [],
+    backends: {
+      shell: (params) => generateImportOutput(params),
+      ncom: (params) => `NCOM_IMPORT[${params.package || params.target}]`,
+      html: (params) => generateImportPromptHTML(params)
+    },
+    description: 'Import and install packages (.k!t files)',
+    examples: ['import~ blender', 'import~ photoshop', 'import~ vscode']
   },
 
   'ui.build': {
@@ -343,5 +360,45 @@ function generatePermissionPrompt(params: Record<string, any>): string {
   <p>App requests: ${permission}</p>
   <button onclick="grantPermission('${permission}')">Allow</button>
   <button onclick="denyPermission('${permission}')">Deny</button>
+</div>`;
+}
+
+function generateImportOutput(params: Record<string, any>): string {
+  const packageName = params.package || params.target || 'unknown';
+  
+  const checkResult = globalPackageManager.isPackageAvailable(packageName);
+  const isInstalled = globalPackageManager.isPackageInstalled(packageName);
+  
+  if (isInstalled) {
+    return `|| ✓ ${packageName} is already installed.`;
+  }
+  
+  if (!checkResult) {
+    return `|| !! ${packageName} doesn't exist in the package registry.`;
+  }
+  
+  const pkg = globalPackageManager.getPackageInfo(packageName);
+  const progressBar = '|████████████████████████████████████████|';
+  
+  return `|| !! ${pkg?.name || packageName} doesn't exist. Would you like me to install ${pkg?.name || packageName}.k!t onto your system? [ Y ] [ N ]
+|| Y
+|| Now installing ${pkg?.name || packageName}.k!t from ${pkg?.source || 'registry'}
+|| ${progressBar} 100%
+|| ✓ ${pkg?.name || packageName} installed successfully!`;
+}
+
+function generateImportPromptHTML(params: Record<string, any>): string {
+  const packageName = params.package || params.target || 'unknown';
+  
+  return `<div class="import-prompt">
+  <p>⚠️ ${packageName} doesn't exist. Would you like to install ${packageName}.k!t?</p>
+  <button onclick="installPackage('${packageName}')" class="btn-install">Yes</button>
+  <button onclick="cancelInstall()" class="btn-cancel">No</button>
+  <div id="install-progress" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <p id="progress-message">Installing...</p>
+  </div>
 </div>`;
 }

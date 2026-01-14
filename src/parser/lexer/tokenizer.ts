@@ -225,6 +225,8 @@ export class Tokenizer {
       'build~': TokenType.BUILD,
       'Build~!!': TokenType.BUILD_BANG,
       'check~': TokenType.CHECK,
+      'import~': TokenType.IMPORT,
+      'import~!!': TokenType.IMPORT_BANG,
       'store~': TokenType.STORE,
       'Store~': TokenType.STORE_CAP,
       '.mf~': TokenType.MANIFEST,

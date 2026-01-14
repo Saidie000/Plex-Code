@@ -17,6 +17,8 @@ export enum TokenType {
   BUILD = 'build~',
   BUILD_BANG = 'Build~!!',
   CHECK = 'check~',
+  IMPORT = 'import~',
+  IMPORT_BANG = 'import~!!',
   STORE = 'store~',
   STORE_CAP = 'Store~',
   MANIFEST = '.mf~',

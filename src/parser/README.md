@@ -106,6 +106,9 @@ npm run parse -- --backend html --intents examples/build-ui.plx
 - `SEND~!!` - Send data
 - `get~` - Get data
 
+### Package Management
+- `import~` - Import and install packages (.k!t files)
+
 ### Core
 - `SimCore~!!` - Simulation control
 - `NCOM~!!` - NCOM core command
@@ -172,6 +175,23 @@ Pair~ | Device~!!
 
 Store~ @pair
 ```
+
+### Example 4: Package Import
+
+```plexcode
+import~ blender
+```
+
+**Output:**
+```
+|| !! blender doesn't exist. Would you like me to install blender.k!t onto your system? [ Y ] [ N ]
+|| Y
+|| Now installing blender.k!t from blender.org/NCOM
+|| |████████████████████████████████████████| 100%
+|| ✓ blender installed successfully!
+```
+
+See [Import Feature Documentation](IMPORT_FEATURE.md) for details.
 
 ## API Reference
 
